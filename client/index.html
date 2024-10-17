@@ -4,22 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My AngularJS App</title>
-    <script src="node_modules/angular/angular.js"></script> <!-- Sửa đường dẫn -->
+    <script src="node_modules/angular/angular.js"></script>
 </head>
-<body ng-app="myApp">
+<body ng-app="myApp" ng-controller="MyController" >
 
-    <div ng-controller="MyController">
+
         <h1>{{ items }}</h1> 
-    </div>
+ 
 
-    <script>
-        angular.module('myApp', [])
-            .controller('MyController', $scope => {
-                $scope.greeting = 'Hello, AngularJS 1.8!';
-                $scope.userName = 'John Doe';
-                $scope.isLoggedIn = true; // Biến kiểu boolean
-                $scope.items = ['Item 1', 'Item 2', 'Item 3'];
-            });
-    </script>
+
+    <script src="app/app.module.js"></script>
+    <script src="app/app.controller.js"></script>
 </body>
 </html>
