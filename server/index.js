@@ -5,13 +5,13 @@ import dotenv from 'dotenv';
 // import bodyParser from 'body-parser';
 
 import routes from './src/routes/index.js';
-// import  { connectDB } from './src/libs/prisma.js';
+import  { connectDB } from './src/libs/prisma.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
 
 // Connect Database
-// connectDB()
+connectDB()
 
 // Middleware
 app.use(cors());
