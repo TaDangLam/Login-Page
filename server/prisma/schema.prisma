@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  staff
+  customer
+}
+
+enum Sex {
+  female
+  male
+}
+
+model User {
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  fullname           String
+  password           String
+  confirmPassword    String
+  email              String    @unique
+  phone              String
+  role               Role      @default(customer)
+  sex                Sex       @default(male)
+  lastLogin          DateTime?
+  resetToken         String?
+  longToken          String?
+  longTokenExpiresAt DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
