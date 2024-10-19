@@ -1,6 +1,4 @@
 import { StatusCodes} from 'http-status-codes';
-import speakeasy from 'speakeasy';
-import nodemailer from 'nodemailer';
 
 import userService from '../services/userService.js';
 
@@ -45,59 +43,24 @@ const userController = {
             const { email, password } = req.body;
             const regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
             const checkMail = regex.test(email);
-
-            if (!checkMail) {
+            if(!checkMail) {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Email is not valid' });
             }
-            if (!password) {
+            if(!password) {
                 return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Password is required' });
             }
-
-            await userService.login(req.body);
-
-            const secret = speakeasy.generateSecret({ length: 20 }); // Tạo secret cho người dùng
-            
-
-            const token = speakeasy.totp({
-                secret: secret.base32,
-                encoding: 'base32'
-            });
-
-            const transporter = nodemailer.createTransport({
-                service: 'Gmail',
-                auth: {
-                    user: process.env.EMAIL,
-                    pass: process.env.EMAIL_PASSWORD
-                }
-            });
-
-            const mailOptions = {
-                from: process.env.EMAIL,
-                to: email,
-                subject: 'Your TOTP Code',
-                text: `Your TOTP code is: ${token}`
-            };
-
-            await transporter.sendMail(mailOptions);
-            res.status(StatusCodes.ACCEPTED).json({ secret: secret.base32, message: 'Check your email for the TOTP code' })
-         } catch (error) {
+            const response = await userService.login(req.body);
+            res.status(StatusCodes.ACCEPTED).json(response);
+        } catch (error) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
-         }
+        }
     },
     verifyTotp: async(req, res) => {
-        const { secret, token } = req.body;
-
-        const verified = speakeasy.totp.verify({
-            secret: secret,
-            encoding: 'base32',
-            token: token,
-            window: 1
-        });
-
-        if (verified) {
-            res.status(StatusCodes.OK).json({ message: 'OTP code is valid' });
-        } else {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: 'OTP code is not valid!' });
+        try {
+            const response = await userService.verifyTotp(req.body);
+            return res.status(StatusCodes.OK).json(response);
+        } catch (error) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
         }
     }
 }
