@@ -8,6 +8,6 @@ import authMiddleWare from '../../middleware/authMiddleware.js';
 Router.get('/get-all-user', authMiddleWare.verifyTokenAdmin, userController.getAllUser);
 Router.post('/register', userController.register);
 Router.post('/login', userController.login);
-
+Router.post('/verify-totp', userController.verifyTotp);
 
 export const UserRoute = Router;
