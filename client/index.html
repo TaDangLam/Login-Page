@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My AngularJS App</title>
+    <link rel="stylesheet" href="./assets/dist/output.css">
     <script src="node_modules/angular/angular.js"></script>
 </head>
 <body ng-app="myApp" ng-controller="MyController" >
-
-
-        <h1>{{ items }}</h1> 
+        <h1 class="text-white">
+            <div class="bg-orange-500 text-3xl">{{ userName }}</div>
+        </h1> 
  
-
-
+        <h2 class="text-5xl text-white bg-green-600">abccccc</h2>
+        
+        <div class="text-xl bg-blue-900 text-white">test 3</div>
+        
     <script src="app/modules/app.module.js"></script>
     <script src="app/controllers/app.controller.js"></script>
 </body>
