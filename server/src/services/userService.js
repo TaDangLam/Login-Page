@@ -6,13 +6,14 @@ import prisma from '../libs/prisma.js';
 import jwtMiddlewareToken from '../middleware/jwtMiddleware.js';
 
 const userService = {
-    getAllUser: async() => {
+    getDetailUser: async(data) => {
         try {
-            const allUser = await prisma.user.findMany();
+            const { id } = data;
+            const user = await prisma.user.findUnique({ where: { id }});
             return {
                 status: 'OK',
-                message: 'Get all user is success',
-                data: allUser
+                message: 'Get detail user is success',
+                data: user
             }
         } catch (error) {
             throw new Error(error.message);
@@ -129,19 +130,48 @@ const userService = {
                 id: checkUser.id,
                 role: checkUser.role
             })
-            const refreshToken = await jwtMiddlewareToken.genneralRefreshToken({
-                id: checkUser.id,
-                role: checkUser.role
-            })
 
-            const updatedUser = await prisma.user.update({
-                where: { id: checkUser.id },
-                data: {
-                    longToken: refreshToken,
-                    longTokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                    lastLogin: new Date()
+            const currentTime = new Date();
+            let refreshToken;
+            let updatedUser;
+
+            // Case 1: longToken is not exist
+            if(!checkUser.longToken) {
+                refreshToken = await jwtMiddlewareToken.genneralRefreshToken({
+                    id: checkUser.id,
+                    role: checkUser.role
+                });
+
+                updatedUser = await prisma.user.update({
+                    where: { id: checkUser.id },
+                    data: {
+                        longToken: refreshToken,
+                        longTokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                        lastLogin: new Date()
+                    }
+                });
+            } else {
+                // Case 2: longToken is exist and longTokenExpiresAt is expired
+                if(checkUser.longTokenExpiresAt >= currentTime) {
+                    refreshToken = checkUser.longToken;
+                    updatedUser = checkUser;
+                } else {
+                    // Case 3: longToken is exist and longTokenExpiresAt is NOT expired
+                    refreshToken = await jwtMiddlewareToken.genneralRefreshToken({
+                        id: checkUser.id,
+                        role: checkUser.role
+                    });
+
+                    updatedUser = await prisma.user.update({
+                        where: { id: checkUser.id },
+                        data: {
+                            longToken: refreshToken,
+                            longTokenExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                            lastLogin: new Date()
+                        }
+                    });
                 }
-            });
+            }
 
             const userWithoutPassword = {
                 ...updatedUser,

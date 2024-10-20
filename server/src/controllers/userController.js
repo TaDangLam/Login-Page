@@ -3,9 +3,9 @@ import { StatusCodes} from 'http-status-codes';
 import userService from '../services/userService.js';
 
 const userController = {
-    getAllUser: async(req, res) => {
+    getDetailUser: async(req, res) => {
         try {
-            const response = await userService.getAllUser();
+            const response = await userService.getDetailUser(req.params);
             res.status(StatusCodes.OK).json(response);
         } catch (error) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });

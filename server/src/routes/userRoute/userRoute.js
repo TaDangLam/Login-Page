@@ -5,7 +5,7 @@ import userController from '../../controllers/userController.js';
 import authMiddleWare from '../../middleware/authMiddleware.js';
 
 
-Router.get('/get-all-user', authMiddleWare.verifyTokenAdmin, userController.getAllUser);
+Router.get('/get-detail-user/:id', authMiddleWare.verifyCustomer, userController.getDetailUser);
 Router.post('/register', userController.register);
 Router.post('/login', userController.login);
 Router.post('/verify-totp', userController.verifyTotp);

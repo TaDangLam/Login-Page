@@ -6,7 +6,7 @@ const jwtMiddlewareToken = {
         return access_token;
     },
     genneralRefreshToken: async(payload) => {
-        const refresh_token = jwt.sign({ payload }, process.env.REFRESH_TOKEN, { expiresIn: '365d' });
+        const refresh_token = jwt.sign({ payload }, process.env.REFRESH_TOKEN, { expiresIn: '30d' });
         return refresh_token;
     },
     refreshTokenService: (token) => {
