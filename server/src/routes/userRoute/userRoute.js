@@ -9,5 +9,6 @@ Router.get('/get-all-user', authMiddleWare.verifyTokenAdmin, userController.getA
 Router.post('/register', userController.register);
 Router.post('/login', userController.login);
 Router.post('/verify-totp', userController.verifyTotp);
+Router.post('/refresh-token', userController.refreshTokenService)
 
 export const UserRoute = Router;

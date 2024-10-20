@@ -62,6 +62,18 @@ const userController = {
         } catch (error) {
             return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
         }
+    },
+    refreshTokenService: async(req, res) => {
+        try {
+            const { token } = req.body;
+            if(!token) {
+                return res.status(StatusCodes.FORBIDDEN).json('Token is required');
+            }
+            const response = await userService.refreshTokenService(req.body);
+            return res.status(StatusCodes.OK).json(response);
+        } catch (error) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
+        }
     }
 }
 

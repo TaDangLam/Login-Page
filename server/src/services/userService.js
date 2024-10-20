@@ -126,11 +126,11 @@ const userService = {
             }
 
             const accessToken = await jwtMiddlewareToken.genneralAccessToken({
-                id: checkUser._id,
+                id: checkUser.id,
                 role: checkUser.role
             })
             const refreshToken = await jwtMiddlewareToken.genneralRefreshToken({
-                id: checkUser._id,
+                id: checkUser.id,
                 role: checkUser.role
             })
 
@@ -158,6 +158,22 @@ const userService = {
             }
         } else {
             throw new Error('OTP code is not valid');
+        }
+    },
+    refreshTokenService: async(data) => {
+        try {
+            const { token } = data;
+            const result = await jwtMiddlewareToken.refreshTokenService(token);
+            
+            if(result.status === 'ERROR') {
+                throw new Error(result.message);
+            }
+            return {
+                message: result.message,
+                accessToken: result.access_token
+            }
+        } catch (error) {
+            throw new Error(error.message);
         }
     }
 };

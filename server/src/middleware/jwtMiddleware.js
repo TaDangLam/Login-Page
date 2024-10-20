@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 
 const jwtMiddlewareToken = {
     genneralAccessToken: async(payload) => {
-        // console.log('payload', payload);
         const access_token = jwt.sign({ payload }, process.env.ACCESS_TOKEN, { expiresIn: '1d' });
         return access_token;
     },
@@ -12,10 +11,10 @@ const jwtMiddlewareToken = {
     },
     refreshTokenService: (token) => {
         return new Promise((resolve, reject) => {
-            const newToken = token.split(' ')[1];
-            // console.log(newToken);
+            // const newToken = token.split(' ')[1];
+            // console.log(token);
             try {
-                jwt.verify(newToken, process.env.REFRESH_TOKEN, async(err, user) => {
+                jwt.verify(token, process.env.REFRESH_TOKEN, async(err, user) => {
                     if(err || !user || !user.payload) {
                         resolve({
                             status: 'ERROR',
@@ -23,19 +22,23 @@ const jwtMiddlewareToken = {
                         })
                     } else {
                         const { payload } = user;
-                        const acccess_token = await middlewareToken.genneralAccessToken({
+                        const access_token = await jwtMiddlewareToken.genneralAccessToken({
                             id: payload?.id,
                             role: payload?.role
                         });
                         resolve({
                             status: 'OK',
                             message: 'SUCCESS',
-                            acccess_token
+                            access_token
                         });
                     }  
                 });
-            } catch (err) {
-                reject(err)
+            } catch (error) {
+                reject({
+                    status: 'ERROR',
+                    message: 'Error generating new access token',
+                    error: error.message
+                })
             }
         })
     }
