@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.my-custom-button {
+    @apply bg-[#005aa7];
+}

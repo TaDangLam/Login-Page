@@ -5,18 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My AngularJS App</title>
     <link rel="stylesheet" href="./assets/dist/output.css">
-    <script src="node_modules/angular/angular.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<body ng-app="myApp" ng-controller="MyController" >
-        <h1 class="text-white">
-            <div class="bg-orange-500 text-3xl">{{ userName }}</div>
-        </h1> 
- 
-        <h2 class="text-5xl text-white bg-green-600">abccccc</h2>
-        
-        <div class="text-xl bg-blue-900 text-white">test 3</div>
-        
+<body ng-app="myApp" ng-controller="AppController" ng-switch="true">
+    <!-- <div ng-view ></div> -->
+    <!-- form đăng nhập -->
+    <div ng-switch-when="true" ng-if="currentPage.loginPage"  class="bg-[url('https://static9.depositphotos.com/1611805/1080/i/450/depositphotos_10808579-stock-illustration-abstract-painted-background.jpg')] bg-center bg-cover bg-no-repeat flex items-center justify-center min-h-screen">
+        <div class="flex flex-col bg-slate-200 h-3/6 w-11/12 sm:w-3/6 md:w-2/5 lg:w-1/3 shadow-2xl rounded-[25px]">
+            <div class="flex flex-col w-full h-5/6 rounded-t-[25px] p-5">
+                <div class="flex text-5xl font-bold items-center justify-center text-[#005AA7]">Login</div>
+                <div class="flex items-center justify-center text-[#005AA7]" >---------------------------</div>
+                <form ng-submit="handleLogin()" class="py-5 flex flex-col items-center gap-4">
+                    <label class="flex items-center gap-2 w-72 p-3 bg-slate-100">
+                        <i class="fa-solid fa-envelope w-1/12"></i>
+                        <input 
+                            type="text" 
+                            placeholder="Email" 
+                            class="w-full bg-slate-100 outline-none"
+                            ng-model="loginData.email"
+                            required
+                        />
+                    </label>
+                    <label class="flex items-center gap-2 w-72 p-3 bg-slate-100">
+                        <i class="fa-solid fa-lock w-1/12"></i>
+                        <input 
+                            type="password" 
+                            placeholder="Password" 
+                            class="w-full bg-slate-100 outline-none"
+                            ng-model="loginData.password"
+                            required
+                        />
+                    </label>
+                    <div class="flex w-72 items-center justify-between">
+                        <div ng-click="showRegister()" class="hover:text-[#005AA7] hover:opacity-75 duration-300 cursor-pointer">Sign up</div>
+                        <div class="hover:text-[#005AA7] hover:opacity-75 duration-300 cursor-pointer">Forgot Password</div>
+                    </div>
+                    <button type="submit" class="flex items-center font-bold justify-center bg-[#005AA7] text-white w-36 rounded-full my-3 p-3 hover:opacity-75 duration-300">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div ng-switch-when="true" ng-if="currentPage.registerPage"  class="bg-[url('https://static9.depositphotos.com/1611805/1080/i/450/depositphotos_10808579-stock-illustration-abstract-painted-background.jpg')] bg-center bg-cover bg-no-repeat flex items-center justify-center min-h-screen">
+        <div class="flex flex-col bg-slate-200 h-auto w-full max-w-xl shadow-2xl rounded-[25px] pt-6 pb-2 mx-2">
+            <div class="flex flex-col items-center justify-center w-full gap-3 pt-2">
+                <div class="text-5xl font-bold text-[#005AA7]">Sign Up {{ abc }}</div>
+                <div class="text-[#005AA7] pt-5">---------------------------</div>
+                <div ng-click="showLogin()" class="hover:text-[#005AA7] hover:opacity-75 duration-300 cursor-pointer">If you have an account, Login </div>
+            </div>
+    
+            <form ng-submit="registerUser()" class="flex flex-col items-center justify-center w-full mt-5 pt-5">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-3 w-full px-5">
+                    <!-- First Column -->
+                    <div class="flex flex-col items-end gap-2 w-full md:w-1/3">
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="text" placeholder="Username" ng-model="user.username" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="password" placeholder="Password" ng-model="user.password" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="password" placeholder="Repeat Password" ng-model="user.confirmPassword" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                    </div>
+    
+                    <!-- Second Column -->
+                    <div class="flex flex-col items-start gap-2 w-full md:w-1/3">
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="text" placeholder="Full Name" ng-model="user.fullname" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="email" placeholder="Email" ng-model="user.email" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="text" placeholder="Phone" ng-model="user.phone" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                    </div>
+    
+                    <!-- Third Column -->
+                    <div class="flex flex-col items-start gap-2 w-full md:w-1/3">
+                        <label class="flex items-center gap-2 w-full bg-slate-100 p-3">
+                            <input type="date" ng-model="user.dateOfBirth" class="w-full bg-slate-100 outline-none" />
+                        </label>
+                    </div>
+                </div>
+    
+                <!-- Gender Radio Buttons -->
+                <div class="flex gap-10 w-full items-center justify-center mt-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" ng-model="user.gender" value="male" /> Male
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" ng-model="user.gender" value="female" /> Female
+                    </label>
+                </div>
+    
+                <!-- Sign Up Button -->
+                <div class="flex flex-col items-center justify-center mt-4">
+                    <button type="submit" class="bg-[#005AA7] text-white font-semibold w-36 h-10 rounded-full hover:opacity-75 duration-300">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div ng-switch-when="true" ng-if="currentPage.userPage">
+        <div class="text-3xl">Hello: {{ user.email }}</div>
+    </div>
+    
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- <script src="node_modules/angular-route/angular-route.js"></script> -->
+    <!-- <script src="node_modules/axios/dist/axios.js"></script> -->
+    <script src="./config.js"></script>
     <script src="app/modules/app.module.js"></script>
-    <script src="app/controllers/app.controller.js"></script>
+    <!-- <script src="app/modules/app.route.js"></script> -->
+    <script src="app/controllers/appController.js"></script>
 </body>
 </html>

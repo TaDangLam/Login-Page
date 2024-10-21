@@ -11,7 +11,17 @@
   "extends": ["eslint:recommended", "plugin:angular/johnpapa"],
   "rules": {
     "angular/controller-as": "off",
+    "angular/controller-as-route": "off",
     "angular/file-name": "off",
     "no-undef": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.html"],
+      "rules": {
+        "no-unused-expressions": "off",
+        "no-undef": "off"
+      }
+    }
+  ]
 }
