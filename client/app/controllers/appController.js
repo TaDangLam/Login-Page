@@ -118,7 +118,6 @@ const appController = ($scope, $http, $window) => {
             })
     }
 
-
     $scope.handleVerifyOtp = (otp) => {
         const otpData = {
             secret: $scope.secret,
@@ -173,6 +172,141 @@ const appController = ($scope, $http, $window) => {
                     title: `${error.data.error}`
                   });
             });
+    }
+
+    $scope.refreshToken = () => {
+        const refreshToken = $scope.user.longToken;
+        return $http.post($window.config.URL_BACKEND + '/refresh-token', { token: refreshToken })
+            .then(response => {
+                const newAccessToken = response.data.accessToken;
+                localStorage.setItem('accessToken', newAccessToken);
+                return newAccessToken;
+            })
+            .catch(error => {
+                console.log("Failed to refresh token:", error);
+            });
+    };
+
+
+    $scope.handleUpdateInfo = () => {
+        const token = localStorage.getItem('accessToken');
+        $http.patch($window.config.URL_BACKEND + `/update-user/${$scope.userId}`, $scope.user, {
+            headers: {
+                'token': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            console.log('Then thành công lần 1: ', response.data)
+            $scope.user = response.data.data
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "success",
+                title: "Update Info is success!"
+              });
+            
+        })
+        .catch(error => {
+            if(error.status === 403  && error.statusText === 'Forbidden'){
+                $scope.refreshToken()
+                    .then(newAccessToken => {
+                        $http.patch($window.config.URL_BACKEND + `/update-user/${$scope.userId}`, $scope.user, {
+                            headers: {
+                                'token': `Bearer ${newAccessToken}`
+                            }
+                        })
+                    // depends on .then above
+                    .then(response => {
+                        console.log('then 1-2: ', response.data);
+                        $scope.user = response.data.data;
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                              toast.onmouseenter = Swal.stopTimer;
+                              toast.onmouseleave = Swal.resumeTimer;
+                            }
+                          });
+                          Toast.fire({
+                            icon: "success",
+                            title: "Update Info After Token Faile is success!"
+                          });
+                    })
+                    .catch(refreshError => {
+                        console.log('catch 1-2: ',refreshError);
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                              toast.onmouseenter = Swal.stopTimer;
+                              toast.onmouseleave = Swal.resumeTimer;
+                            }
+                          });
+                          Toast.fire({
+                            icon: "error",
+                            title: `${refreshError.data}`
+                          });
+                    })
+                })
+            } else {
+                console.log(error)
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                  Toast.fire({
+                    icon: "error",
+                    title: `${'else: ', error.data}`
+                });
+            }
+        })
+    }
+
+    $scope.logout = () => {
+        $window.localStorage.removeItem('accessToken');
+        $scope.user = {};
+        $scope.currentPage = {
+            loginPage: true,
+            registerPage: false,
+            userPage: false,
+        };
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "success",
+            title: "Logged out!!!"
+        });
     }
 }
 
