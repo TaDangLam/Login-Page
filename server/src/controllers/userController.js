@@ -63,6 +63,15 @@ const userController = {
             return res.status(StatusCodes.UNAUTHORIZED).json({ error: error.message });
         }
     },
+    updateUser: async(req, res) => {
+        try {
+            const { id } = req.params;
+            const response = await userService.updateUser(id, req.body);
+            return res.status(StatusCodes.OK).json(response)
+        } catch (error) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+        }
+    },
     refreshTokenService: async(req, res) => {
         try {
             const { token } = req.body;

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const jwtMiddlewareToken = {
     genneralAccessToken: async(payload) => {
-        const access_token = jwt.sign({ payload }, process.env.ACCESS_TOKEN, { expiresIn: '1d' });
+        const access_token = jwt.sign({ payload }, process.env.ACCESS_TOKEN, { expiresIn: '30s' });
         return access_token;
     },
     genneralRefreshToken: async(payload) => {

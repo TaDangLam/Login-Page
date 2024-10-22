@@ -176,7 +176,6 @@ const userService = {
             const userWithoutPassword = {
                 ...updatedUser,
                 password: undefined,
-                role: undefined,
                 confirmPassword: undefined,
             };
 
@@ -188,6 +187,44 @@ const userService = {
             }
         } else {
             throw new Error('OTP code is not valid');
+        }
+    },
+    updateUser: async(userId, data) => {
+        try {
+            const { fullname, phone, password, confirmPassword } = data;
+            const checkUser = await prisma.user.findUnique({ where: { id: userId }});
+            if(checkUser === null) {
+                throw new Error('User is not exist');
+            }
+            const updateFields = {};
+            if (fullname) updateFields.fullname = fullname;
+            if (phone) updateFields.phone = phone;
+            if (password && confirmPassword) {
+                if (password !== confirmPassword) {
+                    throw new Error('Password and confirmPassword do not match');
+                }
+                const hashedPassword = bcrypt.hashSync(password, 10);
+                updateFields.password = hashedPassword;
+                updateFields.confirmPassword = hashedPassword;
+            }
+            const updatedUser = await prisma.user.update({ 
+                where: { id: userId },
+                data: updateFields
+            });
+
+            const userWithoutPassword = {
+                ...updatedUser,
+                password: undefined,
+                confirmPassword: undefined,
+            };
+
+            return({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: userWithoutPassword
+            });
+        } catch (error) {
+            throw new Error(error.message);
         }
     },
     refreshTokenService: async(data) => {

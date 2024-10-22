@@ -9,6 +9,7 @@ Router.get('/get-detail-user/:id', authMiddleWare.verifyCustomer, userController
 Router.post('/register', userController.register);
 Router.post('/login', userController.login);
 Router.post('/verify-totp', userController.verifyTotp);
+Router.patch('/update-user/:id', authMiddleWare.verifyCustomer, userController.updateUser)
 Router.post('/refresh-token', userController.refreshTokenService)
 
 export const UserRoute = Router;
