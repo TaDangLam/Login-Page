@@ -71,6 +71,7 @@ const userService = {
                 let secret = checkUser.secret;
                 if(!secret) {
                     const newSecret = speakeasy.generateSecret({ length: 20 });
+                    // console.log(newSecret);
                     secret = newSecret.base32;
                     await prisma.user.update({
                         where: { id: checkUser.id },

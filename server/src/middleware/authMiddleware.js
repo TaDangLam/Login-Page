@@ -52,7 +52,7 @@ const authMiddleWare = {
     },
     allowGuestAccess: (req, res, next) => {
         const token = req.headers.token;
-    
+
         // Kiểm tra xem có token không
         if (token) {
             const accessToken = token.split(' ')[1];
